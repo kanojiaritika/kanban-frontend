@@ -11,7 +11,7 @@ const Login = () => {
         password: ""
     });
 
-    const [error, setError] = useState({});
+    const [errors, setErrors] = useState({});
 
     const onChange = (e) => {
         const {name, value} = e.target;
@@ -25,6 +25,9 @@ const Login = () => {
     const submitForm = async (e) => {
         e.preventDefault();
 
+        const isValid = validateForm(formData);
+        if (!isValid) return;
+
         try {
             const response = await loginUser(formData);
             console.log("Success: " + response);
@@ -33,27 +36,29 @@ const Login = () => {
 
             if (error.response?.status === 404) {
                 alert("User not found please register")
-                
             }
         }
     }
 
     const validateForm = (formData) => {
 
-        if (formData.emailID === "") {
-            setError();
-            return;
+        const newErrors = {emailId: "", password: ""};
+
+        if (formData.emailId.trim() === "" || formData.emailId === null) {
+            newErrors.emailId = "Email ID cannot be empty";
         }
 
-        if (formData.password === "") {
-            setError();
-            return;
+        if (formData.password.trim() === "" || formData.password === null) {
+            newErrors.password = "Password cannot be empty";
         }
+
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
     }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div>Kanban Board</div>
             <form
             onSubmit={submitForm}
             className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl"
@@ -80,8 +85,12 @@ const Login = () => {
                 value={formData.emailId}
                 onChange={onChange}
                 placeholder="Enter email..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-xl shadow-sm outline-none transition-all duration-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className={`w-full px-3 py-2 border rounded-xl shadow-sm outline-none transition-all duration-300
+                    ${errors.emailId ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"}`}
                 />
+                {errors.emailId && (
+                    <p className="text-red-500 text-sm mt-1">{errors.emailId}</p>
+                )}
             </div>
 
             <div className="mb-4">
@@ -98,8 +107,12 @@ const Login = () => {
                 value={formData.password}
                 onChange={onChange}
                 placeholder="Enter password..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-xl shadow-sm outline-none transition-all duration-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className={`w-full px-3 py-2 border rounded-xl shadow-sm outline-none transition-all duration-300
+                    ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"}`}
                 />
+                {errors.password && (
+                    <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                )}
             </div>
 
             <button className="w-full py-3 mt-2 cursor-pointer rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition">

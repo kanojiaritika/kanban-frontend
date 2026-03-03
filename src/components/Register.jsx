@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { registerUser } from "../apis/LoginReg";
+import { Link } from "react-router-dom";
 
 const Register = () => {
 
@@ -8,6 +9,8 @@ const Register = () => {
         emailId : "",
         password: ""
     })
+
+    const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
 
@@ -22,6 +25,9 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const isValid = validateForm(formData);
+        if (!isValid) return;
+
         try {
             const response = await registerUser(formData)
             console.log(`Response: ${response}`)
@@ -30,31 +36,98 @@ const Register = () => {
         }
     }
 
+    const validateForm = (formData) => {
+
+        const newErrors = {emailId: "", password: ""};
+
+        if (formData.emailId.trim() === "" || formData.emailId === null) {
+            newErrors.emailId = "Email ID cannot be empty";
+        }
+
+        if (formData.password.trim() === "" || formData.password === null) {
+            newErrors.password = "Password cannot be empty";
+        }
+
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
+    }
+
     return (
         
-        <form onSubmit={handleSubmit}>
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <form 
+                onSubmit={handleSubmit}
+                className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl"
+            >
 
-            <h1>Register</h1>
-            <label>EmailID</label>
-            <input 
-                type="email"
-                name="emailId"
-                placeholder="Enter emailId..."
-                value={formData.emailId}
-                onChange={handleChange}
-            />
+            <div className="mb-6 text-center">
+                <p className="text-2xl font-bold">Register</p>
+                <p className="text-sm text-slate-500">
+                    Register to create your account!
+                </p>
+            </div>
 
-            <label>Password</label>
-            <input 
-                type="password"
+            <div className="mb-4">
+                <label
+                htmlFor="emailId"
+                className="block text-base font-medium text-gray-700 mb-2"
+                >
+                Email Address
+                </label>
+                <input
+                    id="emailId"
+                    name="emailId"
+                    type="email"
+                    value={formData.emailId}
+                    onChange={handleChange}
+                    placeholder="Enter email..."
+                    className={`w-full px-3 py-2 border rounded-xl shadow-sm outline-none transition-all duration-300
+                    ${errors.emailId ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"}`}
+                />
+                {errors.emailId && (
+                    <p className="text-red-500 text-sm mt-1">{errors.emailId}</p>
+                )}
+            </div>
+            
+            <div className="mb-4">
+                <label
+                htmlFor="password"
+                className="block text-base font-medium text-gray-700 mb-2"
+                >
+                Password
+                </label>
+
+                <input
                 name="password"
-                placeholder="Enter password..."
+                type="password"
                 value={formData.password}
                 onChange={handleChange}
-            />
+                placeholder="Enter password..."
+                className={`w-full px-3 py-2 border rounded-xl shadow-sm outline-none transition-all duration-300
+                    ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"}`}
+                />
+                {errors.password && (
+                    <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                )}
+            </div>
 
-            <button>Register</button>
+            <button className="w-full py-3 mt-2 cursor-pointer rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition">
+                Register
+            </button>
+
+            <p className="mt-6 text-center text-sm text-gray-600">
+                Already have an account ?{" "}
+                <Link
+                to="/login"
+                className="font-medium text-blue-600 hover:text-blue-700 hover:underline"
+                >
+                Login
+                </Link>
+            </p>
         </form>
+        </div>
+
     )
 
 }
