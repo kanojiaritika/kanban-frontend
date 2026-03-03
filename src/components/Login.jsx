@@ -12,6 +12,10 @@ const Login = () => {
     });
 
     const [errors, setErrors] = useState({});
+    const [serverMsg, setServerMsg] = useState({
+        message: "",
+        type: ""
+    })
 
     const onChange = (e) => {
         const {name, value} = e.target;
@@ -30,19 +34,22 @@ const Login = () => {
 
         try {
             const response = await loginUser(formData);
-            console.log("Success: " + response);
+            setServerMsg({
+                message: response || "Login Successful",
+                type: "success"
+            })
         } catch (error) {
-            console.log("Error:", error);
-
-            if (error.response?.status === 404) {
-                alert("User not found please register")
-            }
+            
+            setServerMsg({
+                message: error.response || "Server Error. Please try later.",
+                type: "error"
+            })
         }
     }
 
     const validateForm = (formData) => {
 
-        const newErrors = {emailId: "", password: ""};
+        let newErrors = {};
 
         if (formData.emailId.trim() === "" || formData.emailId === null) {
             newErrors.emailId = "Email ID cannot be empty";
@@ -115,7 +122,13 @@ const Login = () => {
                 )}
             </div>
 
-            <button className="w-full py-3 mt-2 cursor-pointer rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition">
+            {serverMsg.message && (
+                <p className={`text-center text-sm mt-3 ${serverMsg.type === "success" ? "text-green-600" : "text-red-600"}`}>
+                    {serverMsg.message}
+                </p>
+            )}
+            <button 
+            className="w-full py-3 mt-2 cursor-pointer rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition">
                 Login
             </button>
 

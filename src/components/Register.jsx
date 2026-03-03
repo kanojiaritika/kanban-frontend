@@ -5,12 +5,12 @@ import { Link } from "react-router-dom";
 
 const Register = () => {
 
-    const [formData, setFormData] = useState({
-        emailId : "",
-        password: ""
-    })
-
+    const [formData, setFormData] = useState({emailId : "", password: ""})
     const [errors, setErrors] = useState({});
+    const [serverMsg, setServerMsg] = useState({
+        message: "",
+        type: "" // success or error response type
+    });
 
     const handleChange = (e) => {
 
@@ -30,28 +30,35 @@ const Register = () => {
 
         try {
             const response = await registerUser(formData)
-            console.log(`Response: ${response}`)
+            setServerMsg({
+                message: response || "Registration Successful. Please Login.",
+                type: "success"
+            })
+            
         } catch(error) {
-            console.log(error.response);
+            setServerMsg({
+                message: error.response || "Registration Failed. Server Error. Please try after some time.",
+                type: "error"
+            })
         }
     }
 
     const validateForm = (formData) => {
 
-        const newErrors = {emailId: "", password: ""};
+        let newErrors = {};
 
-        if (formData.emailId.trim() === "" || formData.emailId === null) {
+        if (!formData.emailId || formData.emailId.trim() === "") {
             newErrors.emailId = "Email ID cannot be empty";
         }
 
-        if (formData.password.trim() === "" || formData.password === null) {
+        if (!formData.password || formData.password.trim() === "") {
             newErrors.password = "Password cannot be empty";
         }
 
         setErrors(newErrors);
 
         return Object.keys(newErrors).length === 0;
-    }
+    };
 
     return (
         
@@ -112,7 +119,13 @@ const Register = () => {
                 )}
             </div>
 
-            <button className="w-full py-3 mt-2 cursor-pointer rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition">
+            {serverMsg.message && (
+                <p className={`text-center text-sm mt-3 ${serverMsg.type === "success" ? "text-green-600" : "text-red-600"}`}>
+                    {serverMsg.message}
+                </p>
+            )}
+            <button
+            className="w-full py-3 mt-2 cursor-pointer rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition">
                 Register
             </button>
 
