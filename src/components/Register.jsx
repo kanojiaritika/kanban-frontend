@@ -48,11 +48,11 @@ const Register = () => {
         let newErrors = {};
 
         if (!formData.emailId || formData.emailId.trim() === "") {
-            newErrors.emailId = "Email ID cannot be empty";
+            newErrors.emailId = "Email ID is required";
         }
 
         if (!formData.password || formData.password.trim() === "") {
-            newErrors.password = "Password cannot be empty";
+            newErrors.password = "Password is required";
         }
 
         setErrors(newErrors);
@@ -132,7 +132,7 @@ const Register = () => {
             <p className="mt-6 text-center text-sm text-gray-600">
                 Already have an account ?{" "}
                 <Link
-                to="/login"
+                to="kanban/login"
                 className="font-medium text-blue-600 hover:text-blue-700 hover:underline"
                 >
                 Login

@@ -1,10 +1,13 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../apis/LoginReg";
 import { Link } from "react-router-dom";
 import Register from "./Register";
 
 const Login = () => {
+
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         emailId: "", 
@@ -38,6 +41,7 @@ const Login = () => {
                 message: response || "Login Successful",
                 type: "success"
             })
+            navigate('/home');
         } catch (error) {
             
             setServerMsg({
@@ -52,11 +56,11 @@ const Login = () => {
         let newErrors = {};
 
         if (formData.emailId.trim() === "" || formData.emailId === null) {
-            newErrors.emailId = "Email ID cannot be empty";
+            newErrors.emailId = "Email ID is required";
         }
 
         if (formData.password.trim() === "" || formData.password === null) {
-            newErrors.password = "Password cannot be empty";
+            newErrors.password = "Password is required";
         }
 
         setErrors(newErrors);

@@ -10,8 +10,9 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path='/login' element={<Login />} />
+        <Route path='/kanban/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/home' element={<h1>Home Page</h1>} />
       </Routes>
     </>
 
