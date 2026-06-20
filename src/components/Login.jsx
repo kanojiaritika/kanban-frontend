@@ -15,10 +15,7 @@ const Login = () => {
     });
 
     const [errors, setErrors] = useState({});
-    const [serverMsg, setServerMsg] = useState({
-        message: "",
-        type: ""
-    })
+    const [backendError, setBackendError] = useState("");
 
     const onChange = (e) => {
         const {name, value} = e.target;
@@ -37,17 +34,10 @@ const Login = () => {
 
         try {
             const response = await loginUser(formData);
-            setServerMsg({
-                message: response || "Login Successful",
-                type: "success"
-            })
+            localStorage.setItem("token", response.token);
             navigate('/home');
         } catch (error) {
-            
-            setServerMsg({
-                message: error.response || "Server Error. Please try later.",
-                type: "error"
-            })
+            setBackendError(error.message);
         }
     }
 
@@ -55,11 +45,11 @@ const Login = () => {
 
         let newErrors = {};
 
-        if (formData.emailId.trim() === "" || formData.emailId === null) {
+        if (formData.emailId === null || formData.emailId.trim() === "") {
             newErrors.emailId = "Email ID is required";
         }
 
-        if (formData.password.trim() === "" || formData.password === null) {
+        if (formData.password === null || formData.password.trim() === "") {
             newErrors.password = "Password is required";
         }
 
@@ -125,11 +115,8 @@ const Login = () => {
                     <p className="text-red-500 text-sm mt-1">{errors.password}</p>
                 )}
             </div>
-
-            {serverMsg.message && (
-                <p className={`text-center text-sm mt-3 ${serverMsg.type === "success" ? "text-green-600" : "text-red-600"}`}>
-                    {serverMsg.message}
-                </p>
+            {backendError && (
+                <p className="text-red-500 text-sm mt-1">{backendError}</p>
             )}
             <button 
             className="w-full py-3 mt-2 cursor-pointer rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition">
