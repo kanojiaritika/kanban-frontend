@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8085/kanban",
+const BASE_URL = "http://localhost:8085/kanban";
 
 const axiosInstance = axios.create({
-    baseURL = BASE_URL,
+    baseURL : BASE_URL,
 })
 
 // So when we call say, axios.get("/boards")
@@ -13,7 +13,8 @@ const axiosInstance = axios.create({
 //     method : "get",
 //     baseURL : "http://localhost:8085/kanban",
 //     headers : {
-//         "Content-Type" : "application-json", // This sets mostly when we are sending a JS object
+//         "Content-Type" : "application-json", // This sets mostly when we are sending a JS object 
+//                                                 eg. axios.post("/boards", boardObj);
 //     }
 // }
 
