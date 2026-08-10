@@ -24,7 +24,7 @@ function App() {
 
         <Route 
           path='/kanban/board/:boardId'
-          element={<Board />}
+          element={<Board theme={theme} toggleTheme={toggleTheme} />}
         />
 
       </Routes>

@@ -15,9 +15,9 @@ const KanbanIllustration = () => {
         }
       `}</style>
       <svg viewBox="0 0 480 380" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-        <rect x="16" y="24" width="136" height="330" rx="14" fill="#16213A" fillOpacity="0.35" />
-        <rect x="172" y="24" width="136" height="330" rx="14" fill="#16213A" fillOpacity="0.35" />
-        <rect x="328" y="24" width="136" height="330" rx="14" fill="#16213A" fillOpacity="0.35" />
+        <rect x="16" y="24" width="136" height="330" rx="14" fill="#a56dc5" fillOpacity="0.35" />
+        <rect x="172" y="24" width="136" height="330" rx="14" fill="#926ea7" fillOpacity="0.35" />
+        <rect x="328" y="24" width="136" height="330" rx="14" fill="#a26fbf" fillOpacity="0.35" />
 
         <text x="34" y="52" fill="#97A3C4" fontFamily="Space Grotesk, sans-serif" fontSize="13" letterSpacing="0.5">TO DO</text>
         <text x="190" y="52" fill="#97A3C4" fontFamily="Space Grotesk, sans-serif" fontSize="13" letterSpacing="0.5">IN PROGRESS</text>

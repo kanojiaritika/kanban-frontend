@@ -1,7 +1,7 @@
 import axios from "axios";
 import axiosInstance from "./axiosInstance";
 
-const BASE_URL = "http://localhost:8085/kanban"
+const BASE_URL = "https://kanban-backend-zl54.onrender.com/kanban"
 
 // Login Register and USER APIs
 export const loginUser = async (formData) => {
@@ -82,6 +82,19 @@ export const addBoardMember = async (boardId, member, role) => {
         return response.data;
     } catch (error) {
         const message = error.response?.data?.message || "Could not add member to board.";
+        throw new Error(message);
+    }
+}
+
+// Remove member from Board
+export const removeBoardMember = async (boardId, emailId) => {
+    try {
+        const response = await axiosInstance.delete(`/boards/${boardId}/members`, {
+            params: { emailId },
+        });
+        return response.data;
+    } catch (error) {
+        const message = error.response?.data?.message || "Could not remove member from board.";
         throw new Error(message);
     }
 }
@@ -186,5 +199,97 @@ export const deleteTask = async (taskId) => {
     } catch (error) {
         const message = error.response?.data?.message || "Tasks delete failed";
         throw new Error(message);
+    }
+}
+
+// Assign / reassign a user to a task
+export const assignTaskUser = async (taskId, emailId) => {
+    try {
+        const response = await axiosInstance.put(`/tasks/${taskId}/assignee`, { emailId });
+        return response.data;
+    } catch (error) {
+        const message = error.response?.data?.message || "Tasks delete failed";
+        throw new Error(message);
+    }
+}
+
+// Unassign a user from a task
+export const removeTaskAssignee = async (taskId, emailId) => {
+    try {
+        const response = await axiosInstance.delete(`/tasks/${taskId}/assignee`, { params: { emailId } });
+        return response.data;
+    } catch (error) {
+        const message = error.response?.data?.message || "Tasks delete failed";
+        throw new Error(message);
+    }
+}
+    
+// Display Shared with me Boards
+export const getSharedBoards = async () => {
+    try {
+        const response = await axiosInstance.get(`/boards/sharedBoards`);
+        return response.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+// Update To Favorite Boards
+export const markFavBoard = async (boardId) => {
+    try {
+        const response = await axiosInstance.put(`/boards/favorite/${boardId}`);
+        return response.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+// Get Favorite Boards
+export const getFavBoards = async () => {
+    try {
+        const response = await axiosInstance.get(`/boards/favorites`);
+        return response.data;
+    } catch (err) { 
+        throw err;
+    }
+}
+
+// Archive a board
+export const archiveBoard = async (boardId) => {
+    try {
+        const response = await axiosInstance.put(`/boards/${boardId}/archive`);
+        return response.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+// Unarchive a board
+export const unarchiveBoard = async (boardId) => {
+    try {
+        const response = await axiosInstance.put(`/boards/${boardId}/unarchive`);
+        return response.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+// Get Archived Boards
+export const getArchivedBoards = async () => {
+    try {
+        const response = await axiosInstance.get(`/boards/archived`);
+        return response.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+// Get Recently Opened Boards
+export const getRecentBoards = async () => {
+    try {
+        const response = await axiosInstance.get(`/boards/recent`);
+        return response.data;
+    } catch (err) {
+        throw err;
     }
 }

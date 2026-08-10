@@ -1,6 +1,19 @@
-import { Plus, Search, X, Users, Trash2, LayoutGrid, ArrowUpRight, Sparkles, Clock, MoreVertical, Pencil, Eye, UserPlus } from "lucide-react";
+import { Plus, Search, X, Users, Trash2, LayoutGrid, 
+        ArrowUpRight, Sparkles, Clock, MoreVertical, Pencil, 
+        Eye, UserPlus, Star, Archive, ArchiveRestore } from "lucide-react";
 import { useEffect, useState } from "react";
-import { addBoardMember, createBoard, deleteBoard, getBoards, getUsersOnSearch, updateBoard } from "../../apis/apis";
+import { addBoardMember, 
+        createBoard, 
+        deleteBoard, 
+        getBoards, 
+        getSharedBoards, 
+        getFavBoards, 
+        getArchivedBoards, 
+        archiveBoard, 
+        unarchiveBoard, 
+        getUsersOnSearch, 
+        updateBoard, markFavBoard, getRecentBoards,
+        removeBoardMember } from "../../apis/apis";
 import { useAuth } from "../context/AuthContext";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +44,7 @@ const getAccent = (board) => {
   return boardAccents[Math.abs(hash) % boardAccents.length];
 };
 
-const MyBoards = ({ theme, toggleTheme }) => {
+const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
 
     const {user} = useAuth();
 
@@ -58,13 +71,16 @@ const MyBoards = ({ theme, toggleTheme }) => {
     const [editErrors, setEditErrors] = useState({});
 
     // Add members to an existing board modal
-    const [addMembersModal, setAddMembersModal] = useState(false);
-    const [addMembersTarget, setAddMembersTarget] = useState(null);
-    const [addMembersList, setAddMembersList] = useState([]);
+    const [editMembersModal, setEditMembersModal] = useState(false);
+    const [editMembersTarget, setEditMembersTarget] = useState(null);
+    const [editMembersList, setEditMembersList] = useState([]); 
+
 
     const isDark = theme === "dark";
 
     const navigate = useNavigate();
+
+    const [recentBoards, setRecentBoards] = useState([]);
 
     const roleOptions = [
         { value: "MEMBER", label: "MEMBER" },
@@ -72,9 +88,41 @@ const MyBoards = ({ theme, toggleTheme }) => {
         { value: "OWNER", label: "OWNER" },
     ];
 
+    const sectionConfig = {
+        myBoards: {
+            title: "Your Boards",
+            fetcher: getBoards,
+            showCreate: true,
+            emptyText: "Create your first board to start organizing work.",
+        },
+        shared: {
+            title: "Shared with me",
+            fetcher: getSharedBoards,
+            showCreate: false,
+            emptyText: "No boards have been shared with you yet.",
+        },
+        favorites: {
+            title: "Favorites",
+            fetcher: getFavBoards,
+            showCreate: false,
+            emptyText: "You haven't favorited any boards yet.",
+        },
+        archived: {
+            title: "Archived",
+            fetcher: getArchivedBoards,
+            showCreate: false,
+            emptyText: "No archived boards.",
+        },
+    };
+
+    const currentSection = sectionConfig[activeMenu] ?? sectionConfig.myBoards;
+
     useEffect(() => {
         handleFetchBoards();
-    }, [])
+        if (activeMenu === "myBoards") {
+            handleFetchRecentBoards();
+        }
+    }, [activeMenu]);
 
     // Close the menu on outside click (Board Card Menu)
     useEffect(() => {
@@ -143,8 +191,21 @@ const MyBoards = ({ theme, toggleTheme }) => {
     // Fetch Boards
     const handleFetchBoards = async () => {
         try {
-            const response = await getBoards();
+            const response = await sectionConfig[activeMenu]?.fetcher
+                ? await sectionConfig[activeMenu].fetcher()
+                : await getBoards();
             setBoards(response);
+        } catch (err) {
+            console.log(err);
+            toast.error(err.message || "Failed to load boards.");
+        }
+    }
+
+    // Fetch Recent Boards
+    const handleFetchRecentBoards = async () => {
+        try {
+            const response = await getRecentBoards();
+            setRecentBoards(response);
         } catch (err) {
             console.log(err);
         }
@@ -177,7 +238,79 @@ const MyBoards = ({ theme, toggleTheme }) => {
     };
 
     const handleRoleChange = makeRoleChangeHandler(setMembersList);
-    const handleAddMembersRoleChange = makeRoleChangeHandler(setAddMembersList);
+    const handleEditMembersRoleChange = makeRoleChangeHandler(setEditMembersList);
+
+    const handleRemoveFromEditList = async (member) => {
+        if (member.isExisting) {
+            try {
+                await removeBoardMember(editMembersTarget.id, member.value);
+                toast.success("Member removed.");
+            } catch (err) {
+                toast.error(err.message);
+                return; // don't remove locally if the API call failed
+            }
+        }
+        setEditMembersList((prev) => prev.filter((m) => m.value !== member.value));
+    }
+
+    const handleSubmitEditMembers = async () => {
+        const newMembers = editMembersList.filter((m) => !m.isExisting);
+        if (newMembers.length > 0) {
+            await Promise.all(
+                newMembers.map((m) =>
+                    addBoardMember(editMembersTarget.id, m.value, m.role).catch((err) => console.log(err))
+                )
+            );
+        }
+        toast.success("Members updated.");
+        // closeEditMembersModal();
+        handleFetchBoards();
+    }
+
+    // Toggle Favorite Status of a board
+    const handleToggleFavorite = async (e, board) => {
+        e.stopPropagation(); // don't trigger card navigation
+        const previousBoards = boards;
+
+        // optimistic UI update
+        setBoards((prev) =>
+            prev.map((b) => (b.id === board.id ? { ...b, isFavorite: !b.isFavorite } : b))
+        );
+
+        try {
+            await markFavBoard(board.id);
+            // If we're on the Favorites view, an unfavorite should drop it from the list
+            if (activeMenu === "favorites" && board.isFavorite) {
+                setBoards((prev) => prev.filter((b) => b.id !== board.id));
+            }
+        } catch (err) {
+            console.log(err);
+            toast.error(err.message || "Failed to update favorite.");
+            setBoards(previousBoards); // rollback
+        }
+    };
+
+    // Toggle Archive status of a board
+    const handleToggleArchive = async (e, board) => {
+        e.stopPropagation();
+        setMenuOpenFor(null);
+        const isCurrentlyArchived = activeMenu === "archived";
+
+        try {
+            if (isCurrentlyArchived) {
+                await unarchiveBoard(board.id);
+                toast.success("Board unarchived.");
+            } else {
+                await archiveBoard(board.id);
+                toast.success("Board archived.");
+            }
+            // Board moves lists either way, so drop it from the current view
+            setBoards((prev) => prev.filter((b) => b.id !== board.id));
+        } catch (err) {
+            console.log(err);
+            toast.error(err.message || "Failed to update archive status.");
+        }
+    }
 
     // Validate First Part of Board Modal (Title and Description)
     const validateFirstSec = () => {
@@ -227,6 +360,7 @@ const MyBoards = ({ theme, toggleTheme }) => {
         try {
             await deleteBoard(deleteBoardTarget.id);
             setBoards((prev) => prev.filter((b) => b.id !== deleteBoardTarget.id));
+            setRecentBoards((prev) => prev.filter((b) => b.id !== deleteBoardTarget.id));
             toast.success("Board deleted successfully!");
             setDeleteBoardModal(false);
             setDeleteBoardTarget(null);
@@ -285,31 +419,38 @@ const MyBoards = ({ theme, toggleTheme }) => {
         return Object.keys(newErrors).length === 0;
     }
 
-    // Open Add Members Modal
-    const openAddMembersModal = (e, board) => {
+    // Open Members Modal to add or remove members
+    const openEditMembersModal = (e, board) => {
         e.stopPropagation();
-        setAddMembersTarget(board);
-        setAddMembersList([]);
-        setAddMembersModal(true);
+        setEditMembersTarget(board);
+        const existing = (board.members || []).map((m) => ({
+            value: m.emailId,
+            label: `${m.firstName ?? ""} ${m.lastName ?? ""}`.trim(),
+            role: m.role,
+            isExisting: true,
+            memberId: m.id,
+        }));
+        setEditMembersList(existing);
+        setEditMembersModal(true);
         setMenuOpenFor(null);
     }
 
     // Close Add Members Modal
     const closeAddMembersModal = () => {
-        setAddMembersModal(false);
-        setAddMembersTarget(null);
-        setAddMembersList([]);
+        setEditMembersModal(false);
+        setEditMembersTarget(null);
+        setEditMembersList([]);
     }
 
     const handleSubmitAddMembers = async () => {
-        if (!addMembersTarget || addMembersList.length === 0) {
+        if (!editMembersTarget || editMembersList.length === 0) {
             closeAddMembersModal();
             return;
         }
         try {
             await Promise.all(
-                addMembersList.map((member) =>
-                    addBoardMember(addMembersTarget.id, member.value, member.role).catch((err) => console.log(err))
+                editMembersList.map((member) =>
+                    addBoardMember(editMembersTarget.id, member.value, member.role).catch((err) => console.log(err))
                 )
             );
             toast.success("Members added successfully!");
@@ -365,6 +506,14 @@ const MyBoards = ({ theme, toggleTheme }) => {
         }),
     };
 
+    // Greeting timings
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return "Good Morning";
+        if (hour < 17) return "Good Afternoon";
+        return "Good Evening";
+    };
+
     return (
         <div className={`flex-1 w-full min-w-0 min-h-screen px-6 py-8 transition-colors ${
             isDark ? "bg-neutral-950 text-white" : "bg-neutral-50 text-neutral-900"
@@ -372,8 +521,9 @@ const MyBoards = ({ theme, toggleTheme }) => {
             <Toaster position="bottom-right" toastOptions={{ duration: 3500 }} />
 
             {/* Header */}
-            <div className="flex items-center justify-between mb-8 w-full">                <div>
-                    <h1 className="text-2xl font-semibold">Good Morning, {user?.firstName || "there"} 👋</h1>
+            <div className="flex items-center justify-between mb-8 w-full">                
+                <div>
+                    <h1 className="text-2xl font-semibold">{getGreeting()}, {user?.firstName || "there"} 👋</h1>
                     <p className={`text-md mt-1 ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
                         Here's what's happening across your boards.
                     </p>
@@ -403,26 +553,71 @@ const MyBoards = ({ theme, toggleTheme }) => {
                         />
                     </div>
 
+                    {/* Recently Opened Boards Section */}
+                    {activeMenu === "myBoards" && recentBoards.length > 0 && (
+                        <div className="mb-8">
+                            <div className="flex items-center gap-1.5 mb-3">
+                                <Clock className={`w-3.5 h-3.5 ${isDark ? "text-neutral-500" : "text-neutral-400"}`} />
+                                <h2 className={`text-xs font-semibold uppercase tracking-wide ${
+                                    isDark ? "text-neutral-500" : "text-neutral-400"
+                                }`}>
+                                    Recently Opened
+                                </h2>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {recentBoards.map((board) => {
+                                    const accent = getAccent(board);
+                                    return (
+                                        <div
+                                            key={board.id}
+                                            onClick={() => navigate(`/kanban/board/${board.id}`)}
+                                            className={`flex items-center gap-3 rounded-xl border p-3.5 cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 ${
+                                                isDark
+                                                    ? "bg-neutral-900 border-neutral-800 hover:border-neutral-600"
+                                                    : "bg-white border-neutral-200 hover:border-neutral-300"
+                                            }`}
+                                        >
+                                            <div className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center ${accent.soft} ${accent.text}`}>
+                                                <LayoutGrid className="w-4 h-4" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-medium text-md truncate">{board.title}</p>
+                                                <p className={`text-xs truncate ${isDark ? "text-neutral-500" : "text-neutral-400"}`}>
+                                                    {board.description || "No description yet."}
+                                                </p>
+                                            </div>
+                                            {board.isFavorite && (
+                                                <Star className="w-3.5 h-3.5 shrink-0 fill-amber-400 text-amber-400" />
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Boards header row */}
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-medium">
-                            Your Boards
+                            {currentSection.title}
                             {boards.length > 0 && (
                                 <span className={`ml-2 text-md font-normal ${isDark ? "text-neutral-500" : "text-neutral-400"}`}>
                                     ({filteredBoards.length})
                                 </span>
                             )}
                         </h2>
-                        <button
-                            className="flex items-center gap-2 px-4 py-2 rounded-md text-md font-medium cursor-pointer transition-colors shadow-sm bg-blue-600 hover:bg-blue-700 text-white"
-                            onClick={handleBoardModal}
-                        >
-                            <Plus className="w-4 h-4" />
-                            Create Board
-                        </button>
+                        {currentSection.showCreate && (
+                            <button
+                                className="flex items-center gap-2 px-4 py-2 rounded-md text-md font-medium cursor-pointer transition-colors shadow-sm bg-blue-600 hover:bg-blue-700 text-white"
+                                onClick={handleBoardModal}
+                            >
+                                <Plus className="w-4 h-4" />
+                                Create Board
+                            </button>
+                        )}
                     </div>
+                    
 
-                    {/* Existing Boards */}
                     {filteredBoards.length === 0 && boards.length === 0 ? (
                         <div className={`flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed py-16 text-center ${
                             isDark ? "border-neutral-800" : "border-neutral-200"
@@ -435,16 +630,18 @@ const MyBoards = ({ theme, toggleTheme }) => {
                             <div>
                                 <p className="text-md font-medium">No boards yet</p>
                                 <p className={`text-xs mt-1 ${isDark ? "text-neutral-500" : "text-neutral-400"}`}>
-                                    Create your first board to start organizing work.
+                                    {currentSection.emptyText}
                                 </p>
                             </div>
-                            <button
-                                onClick={handleBoardModal}
-                                className="mt-2 flex items-center gap-1.5 px-4 py-2 rounded-md text-md font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm"
-                            >
-                                <Plus className="w-4 h-4" />
-                                Create Board
-                            </button>
+                            {currentSection.showCreate && (
+                                <button
+                                    onClick={handleBoardModal}
+                                    className="mt-2 flex items-center gap-1.5 px-4 py-2 rounded-md text-md font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm"
+                                >
+                                    <Plus className="w-4 h-4" />
+                                    Create Board
+                                </button>
+                            )}
                         </div>
                     ) : filteredBoards.length === 0 ? (
                         <div className={`text-md rounded-md border border-dashed p-8 text-center ${
@@ -472,68 +669,105 @@ const MyBoards = ({ theme, toggleTheme }) => {
                                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${accent.soft} ${accent.text}`}>
                                                 <LayoutGrid className="w-5 h-5" />
                                             </div>
-                                            <div className="relative">
+
+                                            <div className="flex items-center gap-1">
+
+                                                {/* Favorite Button on each board */}
                                                 <button
-                                                    onClick={(e) => toggleCardMenu(e, board.id)}
+                                                    onClick={(e) => handleToggleFavorite(e, board)}
                                                     className={`p-1.5 rounded-md cursor-pointer transition-colors ${
-                                                        isDark
-                                                            ? "text-neutral-500 hover:bg-neutral-800 hover:text-neutral-300"
-                                                            : "text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+                                                        isDark ? "hover:bg-neutral-800" : "hover:bg-neutral-100"
                                                     }`}
-                                                    title="Board options"
+                                                    title={board.isFavorite ? "Remove from favorites" : "Add to favorites"}
                                                 >
-                                                    <MoreVertical className="w-4 h-4" />
+                                                    <Star
+                                                        className={`w-4 h-4 transition-colors ${
+                                                            board.isFavorite
+                                                                ? "fill-amber-400 text-amber-400"
+                                                                : isDark ? "text-neutral-500" : "text-neutral-400"
+                                                        }`}
+                                                    />
                                                 </button>
 
-                                                {menuOpenFor === board.id && (
-                                                    <div
-                                                        onClick={(e) => e.stopPropagation()}
-                                                        className={`absolute right-0 top-full mt-1 w-44 rounded-lg border shadow-lg py-1 z-20 ${
-                                                            isDark ? "bg-neutral-800 border-neutral-700" : "bg-white border-neutral-200"
+                                                <div className="relative">
+                                                    <button
+                                                        onClick={(e) => toggleCardMenu(e, board.id)}
+                                                        className={`p-1.5 rounded-md cursor-pointer transition-colors ${
+                                                            isDark
+                                                                ? "text-neutral-500 hover:bg-neutral-800 hover:text-neutral-300"
+                                                                : "text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
                                                         }`}
+                                                        title="Board options"
                                                     >
-                                                        <button
-                                                            onClick={(e) => openAddMembersModal(e, board)}
-                                                            className={`w-full cursor-pointer flex items-center gap-2 px-3 py-2 text-md text-left ${
-                                                                isDark ? "text-neutral-300 hover:bg-neutral-700" : "text-neutral-700 hover:bg-neutral-50"
+                                                        <MoreVertical className="w-4 h-4" />
+                                                    </button>
+
+                                                    {menuOpenFor === board.id && (
+                                                        <div
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className={`absolute right-0 top-full mt-1 w-44 rounded-lg border shadow-lg py-1 z-20 ${
+                                                                isDark ? "bg-neutral-800 border-neutral-700" : "bg-white border-neutral-200"
                                                             }`}
                                                         >
-                                                            <UserPlus className="w-3.5 h-3.5" /> Add Members
-                                                        </button>
-                                                        <button
-                                                            onClick={(e) => openEditBoardModal(e, board)}
-                                                            className={`w-full cursor-pointer flex items-center gap-2 px-3 py-2 text-md text-left ${
-                                                                isDark ? "text-neutral-300 hover:bg-neutral-700" : "text-neutral-700 hover:bg-neutral-50"
-                                                            }`}
-                                                        >
-                                                            <Pencil className="w-3.5 h-3.5" /> Edit Board Details
-                                                        </button>
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setMenuOpenFor(null);
-                                                                navigate(`/kanban/board/${board.id}`);
-                                                            }}
-                                                            className={`w-full cursor-pointer flex items-center gap-2 px-3 py-2 text-md text-left ${
-                                                                isDark ? "text-neutral-300 hover:bg-neutral-700" : "text-neutral-700 hover:bg-neutral-50"
-                                                            }`}
-                                                        >
-                                                            <Eye className="w-3.5 h-3.5" /> View Board
-                                                        </button>
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setMenuOpenFor(null);
-                                                                openDeleteBoardModal(board);
-                                                            }}
-                                                            className={`w-full cursor-pointer flex items-center gap-2 px-3 py-2 text-md text-left ${
-                                                                isDark ? "text-red-400 hover:bg-red-500/10" : "text-red-500 hover:bg-red-50"
-                                                            }`}
-                                                        >
-                                                            <Trash2 className="w-3.5 h-3.5" /> Delete Board
-                                                        </button>
-                                                    </div>
-                                                )}
+                                                            <button
+                                                                onClick={(e) => openEditMembersModal(e, board)}
+                                                                className={`w-full cursor-pointer flex items-center gap-2 px-3 py-2 text-md text-left ${
+                                                                    isDark ? "text-neutral-300 hover:bg-neutral-700" : "text-neutral-700 hover:bg-neutral-50"
+                                                                }`}
+                                                            >
+                                                                <UserPlus className="w-3.5 h-3.5" /> Edit Members
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => openEditBoardModal(e, board)}
+                                                                className={`w-full cursor-pointer flex items-center gap-2 px-3 py-2 text-md text-left ${
+                                                                    isDark ? "text-neutral-300 hover:bg-neutral-700" : "text-neutral-700 hover:bg-neutral-50"
+                                                                }`}
+                                                            >
+                                                                <Pencil className="w-3.5 h-3.5" /> Edit Board Details
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setMenuOpenFor(null);
+                                                                    navigate(`/kanban/board/${board.id}`);
+                                                                }}
+                                                                className={`w-full cursor-pointer flex items-center gap-2 px-3 py-2 text-md text-left ${
+                                                                    isDark ? "text-neutral-300 hover:bg-neutral-700" : "text-neutral-700 hover:bg-neutral-50"
+                                                                }`}
+                                                            >
+                                                                <Eye className="w-3.5 h-3.5" /> View Board
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => handleToggleArchive(e, board)}
+                                                                className={`w-full cursor-pointer flex items-center gap-2 px-3 py-2 text-md text-left ${
+                                                                    isDark ? "text-neutral-300 hover:bg-neutral-700" : "text-neutral-700 hover:bg-neutral-50"
+                                                                }`}
+                                                            >
+                                                                {activeMenu === "archived" ? (
+                                                                    <>
+                                                                        <ArchiveRestore className="w-3.5 h-3.5" /> Unarchive
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Archive className="w-3.5 h-3.5" /> Archive Board
+                                                                    </>
+                                                                )}
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setMenuOpenFor(null);
+                                                                    openDeleteBoardModal(board);
+                                                                }}
+                                                                className={`w-full cursor-pointer flex items-center gap-2 px-3 py-2 text-md text-left ${
+                                                                    isDark ? "text-red-400 hover:bg-red-500/10" : "text-red-500 hover:bg-red-50"
+                                                                }`}
+                                                            >
+                                                                <Trash2 className="w-3.5 h-3.5" /> Delete Board
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
 
@@ -590,6 +824,7 @@ const MyBoards = ({ theme, toggleTheme }) => {
                             })}
 
                             {/* Ghost tile, quick way to create a board without scrolling back to the header */}
+                            {currentSection.showCreate && (
                             <button
                                 onClick={handleBoardModal}
                                 className={`flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed p-5 min-h-[168px] transition-colors cursor-pointer ${
@@ -600,7 +835,8 @@ const MyBoards = ({ theme, toggleTheme }) => {
                             >
                                 <Plus className="w-5 h-5" />
                                 <span className="text-md font-medium">New board</span>
-                            </button>
+                                </button>
+                            )}
                         </div>
                     )}
 
@@ -947,7 +1183,7 @@ const MyBoards = ({ theme, toggleTheme }) => {
             )}
 
             {/* Add Members Modal */}
-            {addMembersModal && (
+            {editMembersModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={closeAddMembersModal}>
                     <div
                         className={`rounded-xl shadow-2xl w-full max-w-lg mx-4 border ${
@@ -956,7 +1192,7 @@ const MyBoards = ({ theme, toggleTheme }) => {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className={`flex items-center justify-between px-6 py-4 border-b ${isDark ? "border-neutral-800" : "border-neutral-100"}`}>
-                            <h2 className="text-lg font-semibold">Add Members to "{addMembersTarget?.title}"</h2>
+                            <h2 className="text-lg font-semibold">Add or remove members from "{editMembersTarget?.title}"</h2>
                             <button onClick={closeAddMembersModal} className={`p-1.5 rounded-md ${isDark ? "hover:bg-neutral-800 text-neutral-400" : "hover:bg-neutral-100 text-neutral-500"}`}>
                                 <X className="w-4 h-4" />
                             </button>
@@ -969,28 +1205,29 @@ const MyBoards = ({ theme, toggleTheme }) => {
                                     return value;
                                 }}
                                 onChange={(selectedOption) => {
-                                    if (addMembersList.find((m) => m.value === selectedOption.value)) return;
-                                    setAddMembersList((prev) => [...prev, { ...selectedOption, role: "MEMBER" }]);
+                                    if (editMembersList.find((m) => m.value === selectedOption.value)) return;
+                                    setEditMembersList((prev) => [...prev, { ...selectedOption, role: "MEMBER" }]);
                                 }}
                                 placeholder="Search by name or email"
                                 styles={selectStyles}
                                 menuPortalTarget={document.body}
                             />
                             <div className="flex flex-col gap-2">
-                                {addMembersList.map((member) => (
+                                {editMembersList.map((member) => (
                                     <div key={member.value} className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 ${isDark ? "bg-neutral-800/60 border-neutral-700" : "bg-neutral-50 border-neutral-200"}`}>
                                         <p className="flex-1 text-md truncate">{member.label}</p>
                                         <div className="w-36 shrink-0">
                                             <Select
                                                 options={roleOptions}
                                                 value={roleOptions.find((opt) => opt.value === member.role)}
-                                                onChange={(selectedRole) => handleAddMembersRoleChange(member.value, selectedRole.value)}
+                                                onChange={(selectedRole) => handleEditMembersRoleChange(member.value, selectedRole.value)}
                                                 styles={selectStyles}
                                                 menuPortalTarget={document.body}
                                             />
                                         </div>
                                         <button
-                                            onClick={() => setAddMembersList((prev) => prev.filter((m) => m.value !== member.value))}
+                                            // onClick={() => setEditMembersList((prev) => prev.filter((m) => m.value !== member.value))}
+                                            onClick={() => handleRemoveFromEditList(member)}
                                             className={`shrink-0 p-2 rounded-md ${isDark ? "text-neutral-500 hover:bg-red-500/10 hover:text-red-400" : "text-neutral-400 hover:bg-red-50 hover:text-red-500"}`}
                                         >
                                             <Trash2 className="w-4 h-4" />
@@ -1000,10 +1237,10 @@ const MyBoards = ({ theme, toggleTheme }) => {
                             </div>
                         </div>
                         <div className={`flex justify-end gap-2 px-6 py-4 border-t ${isDark ? "border-neutral-800" : "border-neutral-100"}`}>
-                            <button onClick={closeAddMembersModal} className={`px-4 py-2 text-md rounded-md ${isDark ? "text-neutral-300 hover:bg-neutral-800" : "text-neutral-600 hover:bg-neutral-100"}`}>
+                            <button onClick={closeAddMembersModal} className={`px-4 py-2 cursor-pointer text-md rounded-md ${isDark ? "text-neutral-300 hover:bg-neutral-800" : "text-neutral-600 hover:bg-neutral-100"}`}>
                                 Cancel
                             </button>
-                            <button onClick={handleSubmitAddMembers} className="px-4 py-2 text-md rounded-md bg-blue-600 hover:bg-blue-700 text-white">
+                            <button onClick={handleSubmitEditMembers} className="px-4 py-2 cursor-pointer text-md rounded-md bg-blue-600 hover:bg-blue-700 text-white">
                                 Add Members
                             </button>
                         </div>

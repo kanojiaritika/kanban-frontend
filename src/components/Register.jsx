@@ -133,7 +133,7 @@ const Register = () => {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-3 rounded-xl bg-[#16213A] text-white font-medium tracking-tight hover:bg-[#233151] transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer gap-2"
+                    className="w-full py-3 rounded-xl bg-[#321A52] text-white font-medium tracking-tight hover:bg-[#432467] transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer gap-2"
                 >
                     {loading && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                     {loading ? "Creating account..." : "Register"}

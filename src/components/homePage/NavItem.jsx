@@ -1,5 +1,6 @@
-const NavItem = ({ icon, label, active = false, badge }) => (
+const NavItem = ({ icon, label, active = false, badge, onClick }) => (
     <div
+        onClick={onClick}
         className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg cursor-pointer transition-colors text-md
             ${active
                 ? "bg-indigo-50 dark:bg-white/8 text-indigo-600 dark:text-white font-medium"
