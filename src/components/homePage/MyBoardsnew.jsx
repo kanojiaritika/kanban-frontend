@@ -128,7 +128,7 @@ const MyBoardsnew = ({ theme, toggleTheme, activeMenu }) => {
     };
 
     return (
-        <div className={`flex-1 w-full min-w-0 min-h-screen px-6 py-8 transition-colors ${isDark ? "bg-neutral-950 text-white" : "bg-neutral-50 text-neutral-900"}`}>
+        <div className={`flex-1 w-full min-w-0 min-h-screen px-6 py-8 transition-colors duration-300 ease-in-out ${isDark ? "bg-neutral-950 text-white" : "bg-neutral-50 text-neutral-900"}`}>
             <Toaster position="bottom-right" toastOptions={{ duration: 3500 }} />
 
             <div className="flex items-center justify-between mb-8 w-full">
@@ -163,7 +163,7 @@ const MyBoardsnew = ({ theme, toggleTheme, activeMenu }) => {
                             {boards.length > 0 && <span className={`ml-2 text-md font-normal ${isDark ? "text-neutral-500" : "text-neutral-400"}`}>({filteredBoards.length})</span>}
                         </h2>
                         {currentSection.showCreate && (
-                            <button className="flex items-center gap-2 px-4 py-2 rounded-md text-md font-medium cursor-pointer transition-colors shadow-sm bg-blue-600 hover:bg-blue-700 text-white" onClick={() => setCreateModalOpen(true)}>
+                            <button className="flex items-center gap-2 px-4 py-2 rounded-md text-md font-medium cursor-pointer transition-colors duration-300 ease-in-out shadow-sm bg-blue-600 hover:bg-blue-700 text-white" onClick={() => setCreateModalOpen(true)}>
                                 <Plus className="w-4 h-4" /> Create Board
                             </button>
                         )}
@@ -179,7 +179,7 @@ const MyBoardsnew = ({ theme, toggleTheme, activeMenu }) => {
                                 <p className={`text-xs mt-1 ${isDark ? "text-neutral-500" : "text-neutral-400"}`}>{currentSection.emptyText}</p>
                             </div>
                             {currentSection.showCreate && (
-                                <button onClick={() => setCreateModalOpen(true)} className="mt-2 flex items-center gap-1.5 px-4 py-2 rounded-md text-md font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm">
+                                <button onClick={() => setCreateModalOpen(true)} className="mt-2 flex items-center gap-1.5 px-4 py-2 rounded-md text-md font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300 ease-in-out shadow-sm">
                                     <Plus className="w-4 h-4" /> Create Board
                                 </button>
                             )}
@@ -214,7 +214,7 @@ const MyBoardsnew = ({ theme, toggleTheme, activeMenu }) => {
                             {currentSection.showCreate && (
                                 <button
                                     onClick={() => setCreateModalOpen(true)}
-                                    className={`flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed p-5 min-h-[168px] transition-colors cursor-pointer ${
+                                    className={`flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed p-5 min-h-[168px] transition-colors duration-300 ease-in-out cursor-pointer ${
                                         isDark ? "border-neutral-800 text-neutral-500 hover:border-neutral-600 hover:text-neutral-300" : "border-neutral-200 text-neutral-400 hover:border-neutral-300 hover:text-neutral-600"
                                     }`}
                                 >

@@ -116,7 +116,7 @@ const Board = ({ theme, toggleTheme }) => {
     };
 
     return (
-        <div className={`flex flex-col md:flex-row min-h-screen transition-colors ${isDark ? "bg-gray-950" : "bg-slate-50"}`}>
+        <div className={`flex flex-col md:flex-row min-h-screen transition-colors duration-300 ease-in-out ${isDark ? "bg-gray-950" : "bg-slate-50"}`}>
             <Toaster position="bottom-right" toastOptions={{ duration: 3500 }} />
             <SideBar
                 theme={theme}
@@ -166,7 +166,7 @@ const Board = ({ theme, toggleTheme }) => {
 
                         <button
                             onClick={handleColCreate}
-                            className="rounded-md cursor-pointer bg-indigo-600 px-4 py-2 text-md font-medium text-white shadow-sm transition-colors hover:bg-indigo-700 active:bg-indigo-800"
+                            className="rounded-md cursor-pointer bg-indigo-600 px-4 py-2 text-md font-medium text-white shadow-sm transition-colors duration-300 ease-in-out hover:bg-indigo-700 active:bg-indigo-800"
                         >
                             Create Column
                         </button>
@@ -176,7 +176,7 @@ const Board = ({ theme, toggleTheme }) => {
                                 setAddColClick(false);
                                 setErr({});
                             }}
-                            className={`rounded-md cursor-pointer border px-4 py-2 text-md font-medium transition-colors ${
+                            className={`rounded-md cursor-pointer border px-4 py-2 text-md font-medium transition-colors duration-300 ease-in-out ${
                                 isDark
                                     ? "border-white/15 text-white/60 hover:bg-white/5"
                                     : "border-slate-300 text-slate-500 hover:bg-slate-100"
@@ -191,7 +191,7 @@ const Board = ({ theme, toggleTheme }) => {
                 <button
                     onClick={() => setAddColClick((prev) => !prev)}
                     disabled={addColClick}
-                    className={`mt-5 cursor-pointer rounded-md border px-4 py-2 text-md font-medium transition-colors disabled:cursor-not-allowed ${
+                    className={`mt-5 cursor-pointer rounded-md border px-4 py-2 text-md font-medium transition-colors duration-300 ease-in-out disabled:cursor-not-allowed ${
                         isDark
                             ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 disabled:border-white/10 disabled:bg-white/5 disabled:text-white/30"
                             : "border-indigo-200 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400"

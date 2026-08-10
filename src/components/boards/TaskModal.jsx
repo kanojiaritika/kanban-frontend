@@ -48,7 +48,7 @@ const TaskModal = ({
                     </h3>
                     <button
                         onClick={onClose}
-                        className={`rounded-md p-1 transition-colors ${
+                        className={`rounded-md p-1 transition-colors duration-300 ease-in-out ${
                             isDark ? "text-white/40 hover:bg-white/10 hover:text-white/70" : "text-slate-400 hover:bg-slate-100 hover:text-slate-600"
                         }`}
                     >
@@ -117,13 +117,13 @@ const TaskModal = ({
                     <div className="mt-2 flex gap-2">
                         <button
                             onClick={onSubmit}
-                            className="flex-1 rounded-md bg-emerald-600 px-4 py-2 text-md font-medium text-white transition-colors hover:bg-emerald-700 cursor-pointer"
+                            className="flex-1 rounded-md bg-emerald-600 px-4 py-2 text-md font-medium text-white transition-colors duration-300 ease-in-out hover:bg-emerald-700 cursor-pointer"
                         >
                             {isEditMode ? "Update Task" : "Create Task"}
                         </button>
                         <button
                             onClick={onClose}
-                            className={`flex-1 rounded-md border px-4 py-2 text-md font-medium transition-colors cursor-pointer ${
+                            className={`flex-1 rounded-md border px-4 py-2 text-md font-medium transition-colors duration-300 ease-in-out cursor-pointer ${
                                 isDark ? "border-neutral-700 text-white/60 hover:bg-white/5" : "border-slate-300 text-slate-500 hover:bg-slate-100"
                             }`}
                         >

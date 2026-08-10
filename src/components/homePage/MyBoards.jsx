@@ -515,7 +515,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
     };
 
     return (
-        <div className={`flex-1 w-full min-w-0 min-h-screen px-6 py-8 transition-colors ${
+        <div className={`flex-1 w-full min-w-0 min-h-screen px-6 py-8 transition-colors duration-300 ease-in-out ${
             isDark ? "bg-neutral-950 text-white" : "bg-neutral-50 text-neutral-900"
         }`}>
             <Toaster position="bottom-right" toastOptions={{ duration: 3500 }} />
@@ -608,7 +608,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                         </h2>
                         {currentSection.showCreate && (
                             <button
-                                className="flex items-center gap-2 px-4 py-2 rounded-md text-md font-medium cursor-pointer transition-colors shadow-sm bg-blue-600 hover:bg-blue-700 text-white"
+                                className="flex items-center gap-2 px-4 py-2 rounded-md text-md font-medium cursor-pointer transition-colors duration-300 ease-in-out shadow-sm bg-blue-600 hover:bg-blue-700 text-white"
                                 onClick={handleBoardModal}
                             >
                                 <Plus className="w-4 h-4" />
@@ -636,7 +636,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                             {currentSection.showCreate && (
                                 <button
                                     onClick={handleBoardModal}
-                                    className="mt-2 flex items-center gap-1.5 px-4 py-2 rounded-md text-md font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm"
+                                    className="mt-2 flex items-center gap-1.5 px-4 py-2 rounded-md text-md font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300 ease-in-out shadow-sm"
                                 >
                                     <Plus className="w-4 h-4" />
                                     Create Board
@@ -675,13 +675,13 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                                                 {/* Favorite Button on each board */}
                                                 <button
                                                     onClick={(e) => handleToggleFavorite(e, board)}
-                                                    className={`p-1.5 rounded-md cursor-pointer transition-colors ${
+                                                    className={`p-1.5 rounded-md cursor-pointer transition-colors duration-300 ease-in-out ${
                                                         isDark ? "hover:bg-neutral-800" : "hover:bg-neutral-100"
                                                     }`}
                                                     title={board.isFavorite ? "Remove from favorites" : "Add to favorites"}
                                                 >
                                                     <Star
-                                                        className={`w-4 h-4 transition-colors ${
+                                                        className={`w-4 h-4 transition-colors duration-300 ease-in-out ${
                                                             board.isFavorite
                                                                 ? "fill-amber-400 text-amber-400"
                                                                 : isDark ? "text-neutral-500" : "text-neutral-400"
@@ -692,7 +692,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                                                 <div className="relative">
                                                     <button
                                                         onClick={(e) => toggleCardMenu(e, board.id)}
-                                                        className={`p-1.5 rounded-md cursor-pointer transition-colors ${
+                                                        className={`p-1.5 rounded-md cursor-pointer transition-colors duration-300 ease-in-out ${
                                                             isDark
                                                                 ? "text-neutral-500 hover:bg-neutral-800 hover:text-neutral-300"
                                                                 : "text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
@@ -827,7 +827,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                             {currentSection.showCreate && (
                             <button
                                 onClick={handleBoardModal}
-                                className={`flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed p-5 min-h-[168px] transition-colors cursor-pointer ${
+                                className={`flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed p-5 min-h-[168px] transition-colors duration-300 ease-in-out cursor-pointer ${
                                     isDark
                                         ? "border-neutral-800 text-neutral-500 hover:border-neutral-600 hover:text-neutral-300"
                                         : "border-neutral-200 text-neutral-400 hover:border-neutral-300 hover:text-neutral-600"
@@ -885,7 +885,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                                     setErrors({});
                                     setStep("first")
                                 }}
-                                className={`p-1.5 rounded-md transition-colors ${
+                                className={`p-1.5 rounded-md transition-colors duration-300 ease-in-out ${
                                     isDark ? "hover:bg-neutral-800 text-neutral-400" : "hover:bg-neutral-100 text-neutral-500"
                                 }`}
                             >
@@ -904,7 +904,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                                             Title
                                         </label>
                                         <input
-                                            className={`w-full rounded-lg border px-3 py-2.5 text-md focus:outline-none focus:ring-2 transition-colors ${
+                                            className={`w-full rounded-lg border px-3 py-2.5 text-md focus:outline-none focus:ring-2 transition-colors duration-300 ease-in-out ${
                                                 isDark
                                                     ? "bg-neutral-800 border-neutral-700 focus:ring-blue-600 placeholder:text-neutral-500"
                                                     : "bg-neutral-50 border-neutral-200 focus:ring-blue-500 placeholder:text-neutral-400"
@@ -922,7 +922,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                                             Description
                                         </label>
                                         <input
-                                            className={`w-full rounded-lg border px-3 py-2.5 text-md focus:outline-none focus:ring-2 transition-colors ${
+                                            className={`w-full rounded-lg border px-3 py-2.5 text-md focus:outline-none focus:ring-2 transition-colors duration-300 ease-in-out ${
                                                 isDark
                                                     ? "bg-neutral-800 border-neutral-700 focus:ring-blue-600 placeholder:text-neutral-500"
                                                     : "bg-neutral-50 border-neutral-200 focus:ring-blue-500 placeholder:text-neutral-400"
@@ -1015,7 +1015,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                                                                 onClick={() =>
                                                                     setMembersList(prev => prev.filter(m => m.value !== member.value))
                                                                 }
-                                                                className={`shrink-0 p-2 rounded-md transition-colors ${
+                                                                className={`shrink-0 p-2 rounded-md transition-colors duration-300 ease-in-out ${
                                                                     isDark
                                                                         ? "text-neutral-500 hover:bg-red-500/10 hover:text-red-400"
                                                                         : "text-neutral-400 hover:bg-red-50 hover:text-red-500"
@@ -1042,7 +1042,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                                 (
                                     <>
                                         <button
-                                            className={`px-4 py-2 text-md rounded-md cursor-pointer transition-colors ${
+                                            className={`px-4 py-2 text-md rounded-md cursor-pointer transition-colors duration-300 ease-in-out ${
                                                 isDark
                                                     ? "text-neutral-300 hover:bg-neutral-800"
                                                     : "text-neutral-600 hover:bg-neutral-100"
@@ -1052,7 +1052,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                                             Cancel
                                         </button>
                                         <button
-                                            className="px-4 py-2 text-md rounded-md bg-blue-600 hover:bg-blue-700 text-white cursor-pointer transition-colors shadow-sm"
+                                            className="px-4 py-2 text-md rounded-md bg-blue-600 hover:bg-blue-700 text-white cursor-pointer transition-colors duration-300 ease-in-out shadow-sm"
                                             onClick={() => {
                                                 if (validateFirstSec()) {
                                                     setStep("second");
@@ -1065,7 +1065,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                                 ) : (
                                     <>
                                         <button
-                                            className={`px-4 py-2 text-md rounded-md cursor-pointer transition-colors ${
+                                            className={`px-4 py-2 text-md rounded-md cursor-pointer transition-colors duration-300 ease-in-out ${
                                                 isDark
                                                     ? "text-neutral-300 hover:bg-neutral-800"
                                                     : "text-neutral-600 hover:bg-neutral-100"
@@ -1075,7 +1075,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                                             Back
                                         </button>
                                         <button
-                                            className="px-4 py-2 text-md rounded-md bg-blue-600 hover:bg-blue-700 text-white cursor-pointer transition-colors shadow-sm"
+                                            className="px-4 py-2 text-md rounded-md bg-blue-600 hover:bg-blue-700 text-white cursor-pointer transition-colors duration-300 ease-in-out shadow-sm"
                                             onClick={handleCreateBoard}
                                         >
                                             Create
@@ -1108,7 +1108,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                             <button
                                 onClick={closeDeleteBoardModal}
                                 disabled={deletingBoard}
-                                className={`flex-1 rounded-md border px-4 py-2 text-md font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
+                                className={`flex-1 rounded-md border px-4 py-2 text-md font-medium transition-colors duration-300 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed ${
                                     isDark
                                         ? "border-neutral-700 text-neutral-300 hover:bg-neutral-800"
                                         : "border-neutral-300 text-neutral-600 hover:bg-neutral-100"
@@ -1119,7 +1119,7 @@ const MyBoards = ({ theme, toggleTheme, activeMenu }) => {
                             <button
                                 onClick={handleDeleteBoard}
                                 disabled={deletingBoard}
-                                className="flex-1 flex items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-md font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
+                                className="flex-1 flex items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-md font-medium text-white transition-colors duration-300 ease-in-out hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                                 {deletingBoard && (
                                     <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />

@@ -30,8 +30,8 @@ const DeleteBoardModal = ({ board, isDark, onClose, onDeleted }) => {
                     Are you sure you want to delete "{board?.title}"? This will permanently remove the board and everything in it.
                 </p>
                 <div className="mt-5 flex gap-2">
-                    <button onClick={handleClose} disabled={deleting} className={`flex-1 rounded-md border px-4 py-2 text-md font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${isDark ? "border-neutral-700 text-neutral-300 hover:bg-neutral-800" : "border-neutral-300 text-neutral-600 hover:bg-neutral-100"}`}>Cancel</button>
-                    <button onClick={handleDelete} disabled={deleting} className="flex-1 flex items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-md font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed">
+                    <button onClick={handleClose} disabled={deleting} className={`flex-1 rounded-md border px-4 py-2 text-md font-medium transition-colors duration-300 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed ${isDark ? "border-neutral-700 text-neutral-300 hover:bg-neutral-800" : "border-neutral-300 text-neutral-600 hover:bg-neutral-100"}`}>Cancel</button>
+                    <button onClick={handleDelete} disabled={deleting} className="flex-1 flex items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-md font-medium text-white transition-colors duration-300 ease-in-out hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed">
                         {deleting && <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
                         {deleting ? "Deleting..." : "Delete"}
                     </button>

@@ -63,7 +63,7 @@ const CreateBoardModal = ({ isDark, onClose, onCreated }) => {
                             <span className={`h-1.5 w-6 rounded-full ${step === "second" ? "bg-blue-600" : (isDark ? "bg-neutral-700" : "bg-neutral-200")}`} />
                         </div>
                     </div>
-                    <button onClick={onClose} className={`p-1.5 rounded-md transition-colors ${isDark ? "hover:bg-neutral-800 text-neutral-400" : "hover:bg-neutral-100 text-neutral-500"}`}>
+                    <button onClick={onClose} className={`p-1.5 rounded-md transition-colors duration-300 ease-in-out ${isDark ? "hover:bg-neutral-800 text-neutral-400" : "hover:bg-neutral-100 text-neutral-500"}`}>
                         <X className="w-4 h-4" />
                     </button>
                 </div>
@@ -74,7 +74,7 @@ const CreateBoardModal = ({ isDark, onClose, onCreated }) => {
                             <div>
                                 <label className={`block text-md font-medium mb-1.5 ${isDark ? "text-neutral-300" : "text-neutral-600"}`}>Title</label>
                                 <input
-                                    className={`w-full rounded-lg border px-3 py-2.5 text-md focus:outline-none focus:ring-2 transition-colors ${
+                                    className={`w-full rounded-lg border px-3 py-2.5 text-md focus:outline-none focus:ring-2 transition-colors duration-300 ease-in-out ${
                                         isDark ? "bg-neutral-800 border-neutral-700 focus:ring-blue-600 placeholder:text-neutral-500" : "bg-neutral-50 border-neutral-200 focus:ring-blue-500 placeholder:text-neutral-400"
                                     } ${errors.title ? "border-red-500" : ""}`}
                                     value={boardDTO.title}
@@ -86,7 +86,7 @@ const CreateBoardModal = ({ isDark, onClose, onCreated }) => {
                             <div>
                                 <label className={`block text-md font-medium mb-1.5 ${isDark ? "text-neutral-300" : "text-neutral-600"}`}>Description</label>
                                 <input
-                                    className={`w-full rounded-lg border px-3 py-2.5 text-md focus:outline-none focus:ring-2 transition-colors ${
+                                    className={`w-full rounded-lg border px-3 py-2.5 text-md focus:outline-none focus:ring-2 transition-colors duration-300 ease-in-out ${
                                         isDark ? "bg-neutral-800 border-neutral-700 focus:ring-blue-600 placeholder:text-neutral-500" : "bg-neutral-50 border-neutral-200 focus:ring-blue-500 placeholder:text-neutral-400"
                                     } ${errors.description ? "border-red-500" : ""}`}
                                     value={boardDTO.description}
@@ -143,7 +143,7 @@ const CreateBoardModal = ({ isDark, onClose, onCreated }) => {
                                                 </div>
                                                 <button
                                                     onClick={() => setMembersList((prev) => prev.filter((m) => m.value !== member.value))}
-                                                    className={`shrink-0 p-2 rounded-md transition-colors ${isDark ? "text-neutral-500 hover:bg-red-500/10 hover:text-red-400" : "text-neutral-400 hover:bg-red-50 hover:text-red-500"}`}
+                                                    className={`shrink-0 p-2 rounded-md transition-colors duration-300 ease-in-out ${isDark ? "text-neutral-500 hover:bg-red-500/10 hover:text-red-400" : "text-neutral-400 hover:bg-red-50 hover:text-red-500"}`}
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -159,13 +159,13 @@ const CreateBoardModal = ({ isDark, onClose, onCreated }) => {
                 <div className={`flex justify-end gap-2 px-8 py-5 border-t ${isDark ? "border-neutral-800" : "border-neutral-100"}`}>
                     {step === "first" ? (
                         <>
-                            <button onClick={onClose} className={`px-4 py-2 text-md rounded-md cursor-pointer transition-colors ${isDark ? "text-neutral-300 hover:bg-neutral-800" : "text-neutral-600 hover:bg-neutral-100"}`}>Cancel</button>
-                            <button className="px-4 py-2 text-md rounded-md bg-blue-600 hover:bg-blue-700 text-white cursor-pointer transition-colors shadow-sm" onClick={() => { if (validateFirstSec()) setStep("second"); }}>Next</button>
+                            <button onClick={onClose} className={`px-4 py-2 text-md rounded-md cursor-pointer transition-colors duration-300 ease-in-out ${isDark ? "text-neutral-300 hover:bg-neutral-800" : "text-neutral-600 hover:bg-neutral-100"}`}>Cancel</button>
+                            <button className="px-4 py-2 text-md rounded-md bg-blue-600 hover:bg-blue-700 text-white cursor-pointer transition-colors duration-300 ease-in-out shadow-sm" onClick={() => { if (validateFirstSec()) setStep("second"); }}>Next</button>
                         </>
                     ) : (
                         <>
-                            <button onClick={() => setStep("first")} className={`px-4 py-2 text-md rounded-md cursor-pointer transition-colors ${isDark ? "text-neutral-300 hover:bg-neutral-800" : "text-neutral-600 hover:bg-neutral-100"}`}>Back</button>
-                            <button onClick={handleCreateBoard} className="px-4 py-2 text-md rounded-md bg-blue-600 hover:bg-blue-700 text-white cursor-pointer transition-colors shadow-sm">Create</button>
+                            <button onClick={() => setStep("first")} className={`px-4 py-2 text-md rounded-md cursor-pointer transition-colors duration-300 ease-in-out ${isDark ? "text-neutral-300 hover:bg-neutral-800" : "text-neutral-600 hover:bg-neutral-100"}`}>Back</button>
+                            <button onClick={handleCreateBoard} className="px-4 py-2 text-md rounded-md bg-blue-600 hover:bg-blue-700 text-white cursor-pointer transition-colors duration-300 ease-in-out shadow-sm">Create</button>
                         </>
                     )}
                 </div>

@@ -37,16 +37,16 @@ const BoardCard = ({
                 <div className="flex items-center gap-1">
                     <button
                         onClick={(e) => onToggleFavorite(e, board)}
-                        className={`p-1.5 rounded-md cursor-pointer transition-colors ${isDark ? "hover:bg-neutral-800" : "hover:bg-neutral-100"}`}
+                        className={`p-1.5 rounded-md cursor-pointer transition-colors duration-300 ease-in-out ${isDark ? "hover:bg-neutral-800" : "hover:bg-neutral-100"}`}
                         title={board.isFavorite ? "Remove from favorites" : "Add to favorites"}
                     >
-                        <Star className={`w-4 h-4 transition-colors ${board.isFavorite ? "fill-amber-400 text-amber-400" : isDark ? "text-neutral-500" : "text-neutral-400"}`} />
+                        <Star className={`w-4 h-4 transition-colors duration-300 ease-in-out ${board.isFavorite ? "fill-amber-400 text-amber-400" : isDark ? "text-neutral-500" : "text-neutral-400"}`} />
                     </button>
 
                     <div className="relative">
                         <button
                             onClick={(e) => onToggleMenu(e, board.id)}
-                            className={`p-1.5 rounded-md cursor-pointer transition-colors ${
+                            className={`p-1.5 rounded-md cursor-pointer transition-colors duration-300 ease-in-out ${
                                 isDark ? "text-neutral-500 hover:bg-neutral-800 hover:text-neutral-300" : "text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
                             }`}
                             title="Board options"

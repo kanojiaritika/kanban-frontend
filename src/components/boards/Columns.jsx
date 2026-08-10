@@ -261,11 +261,11 @@ const Columns = ({ column, onDelete, theme, tasks, refetchTasks, currentUserRole
             <div className={`flex items-center justify-between rounded-t-xl px-4 py-3 ${accent.header}`}>
                 <h1 className="text-md font-semibold text-white truncate pr-2">{column.name}</h1>
                 <div className="flex items-center gap-1.5 shrink-0">
-                    <button onClick={handleOpenCreate} className="rounded-md bg-white/20 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-white/30 cursor-pointer">
+                    <button onClick={handleOpenCreate} className="rounded-md bg-white/20 px-3 py-1 text-xs font-medium text-white transition-colors duration-300 ease-in-out hover:bg-white/30 cursor-pointer">
                         Add Task
                     </button>
                     {currentUserRole !== "MEMBER" && (
-                        <button onClick={() => setDeleteColModal(true)} className="rounded-md p-1.5 text-white/80 transition-colors hover:bg-white/20 hover:text-white cursor-pointer" title="Delete column">
+                        <button onClick={() => setDeleteColModal(true)} className="rounded-md p-1.5 text-white/80 transition-colors duration-300 ease-in-out hover:bg-white/20 hover:text-white cursor-pointer" title="Delete column">
                             <Trash2 className="h-3.5 w-3.5 cursor-pointer" />
                         </button>
                     )}
@@ -298,13 +298,13 @@ const Columns = ({ column, onDelete, theme, tasks, refetchTasks, currentUserRole
                         <div className="mt-5 flex gap-2">
                             <button
                                 onClick={() => setDeleteTaskModal(false)}
-                                className={`flex-1 cursor-pointer rounded-md border px-4 py-2 text-md font-medium transition-colors ${
+                                className={`flex-1 cursor-pointer rounded-md border px-4 py-2 text-md font-medium transition-colors duration-300 ease-in-out ${
                                     isDark ? "border-neutral-700 text-white/60 hover:bg-white/5" : "border-slate-300 text-slate-500 hover:bg-slate-100"
                                 }`}
                             >
                                 Cancel
                             </button>
-                            <button onClick={handleDeleteTask} className="flex-1 cursor-pointer rounded-md bg-red-600 px-4 py-2 text-md font-medium text-white transition-colors hover:bg-red-700">
+                            <button onClick={handleDeleteTask} className="flex-1 cursor-pointer rounded-md bg-red-600 px-4 py-2 text-md font-medium text-white transition-colors duration-300 ease-in-out hover:bg-red-700">
                                 Delete
                             </button>
                         </div>
@@ -322,13 +322,13 @@ const Columns = ({ column, onDelete, theme, tasks, refetchTasks, currentUserRole
                         <div className="mt-5 flex gap-2">
                             <button
                                 onClick={() => setDeleteColModal(false)}
-                                className={`flex-1 cursor-pointer rounded-md border px-4 py-2 text-md font-medium transition-colors ${
+                                className={`flex-1 cursor-pointer rounded-md border px-4 py-2 text-md font-medium transition-colors duration-300 ease-in-out ${
                                     isDark ? "border-neutral-700 text-white/60 hover:bg-white/5" : "border-slate-300 text-slate-500 hover:bg-slate-100"
                                 }`}
                             >
                                 Cancel
                             </button>
-                            <button onClick={handleDeleteColumn} className="flex-1 cursor-pointer rounded-md bg-red-600 px-4 py-2 text-md font-medium text-white transition-colors hover:bg-red-700">
+                            <button onClick={handleDeleteColumn} className="flex-1 cursor-pointer rounded-md bg-red-600 px-4 py-2 text-md font-medium text-white transition-colors duration-300 ease-in-out hover:bg-red-700">
                                 Delete
                             </button>
                         </div>
@@ -347,7 +347,7 @@ const Columns = ({ column, onDelete, theme, tasks, refetchTasks, currentUserRole
                             <div
                                 key={task.id}
                                 onClick={() => handleOpenUpdate(task)}
-                                className={`group relative cursor-pointer rounded-xl border p-4 shadow-sm transition-colors ${
+                                className={`group relative cursor-pointer rounded-xl border p-4 shadow-sm transition-colors duration-300 ease-in-out ${
                                     isDark
                                         ? "border-neutral-800 bg-neutral-800/60 hover:border-indigo-500/40 hover:bg-neutral-800"
                                         : "border-slate-200 bg-white hover:border-indigo-300 hover:bg-indigo-50/40"

@@ -35,19 +35,25 @@ const SideBar = ({ toggleTheme, theme, activeMenu, setActiveMenu }) => {
             </div>
 
             {/* Backdrop mobile only, shown when drawer is open */}
-            {isMobileOpen && (
+            {/* {isMobileOpen && ( */}
                 <div
                     onClick={() => setIsMobileOpen(false)}
-                    className="md:hidden fixed inset-0 z-40 bg-black/50"
+                    className={`md:hidden fixed inset-0 z-40 bg-black/50 transition-opacity duration-300
+                                ${isMobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+                    // className="md:hidden fixed inset-0 z-40 bg-black/50"
                 />
-            )}
+            {/* )} */}
 
             {/* Sidebar fixed drawer on mobile, static column on md+ */}
             <div
+                // className={`flex flex-col w-56 h-screen overflow-y-auto bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-white/5 shrink-0
+                //     fixed top-0 left-0 z-50 transition-transform duration-200
+                //     md:sticky md:translate-x-0
+                //     ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}`}
                 className={`flex flex-col w-56 h-screen overflow-y-auto bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-white/5 shrink-0
-                    fixed top-0 left-0 z-50 transition-transform duration-200
-                    md:sticky md:translate-x-0
-                    ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}`}
+                            fixed top-0 left-0 z-50 transition-transform duration-300 ease-in-out
+                            md:sticky md:translate-x-0
+                            ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}`}
             >
                 <div className="flex items-center justify-between gap-2.5 px-5 py-5 border-b border-gray-200 dark:border-white/5">
                     <div className="flex items-center gap-2.5">
@@ -112,7 +118,7 @@ const SideBar = ({ toggleTheme, theme, activeMenu, setActiveMenu }) => {
                 <div className="mt-auto px-3 py-4 border-t border-gray-200 dark:border-white/5">
                     <button
                         onClick={toggleTheme}
-                        className="flex items-center gap-2.5 w-full px-2.5 py-2 mb-1 rounded-lg text-md text-gray-500 dark:text-white/45 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors cursor-pointer"
+                        className="flex items-center gap-2.5 w-full px-2.5 py-2 mb-1 rounded-lg text-md text-gray-500 dark:text-white/45 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors duration-300 ease-in-out cursor-pointer"
                     >
                         {theme === "dark"
                             ? <Sun size={15} />
@@ -129,7 +135,7 @@ const SideBar = ({ toggleTheme, theme, activeMenu, setActiveMenu }) => {
                             <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{user?.firstName}</p>
                             <p className="text-[10px] text-gray-400 dark:text-white/35">Free plan</p>
                         </div>
-                        <Settings size={13} className="text-gray-300 dark:text-white/25 group-hover:text-gray-500 dark:group-hover:text-white/50 transition-colors shrink-0" />
+                        <Settings size={13} className="text-gray-300 dark:text-white/25 group-hover:text-gray-500 dark:group-hover:text-white/50 transition-colors duration-300 ease-in-out shrink-0" />
                     </div>
                 </div>
             </div>
